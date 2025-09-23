@@ -1,0 +1,4 @@
+whisper
+torch
+requests
+python-dotenv
