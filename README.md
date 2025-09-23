@@ -40,8 +40,7 @@ Sie nutzt [OpenAI Whisper](https://github.com/openai/whisper) für die Transkrip
 ```bash
 git clone https://github.com/yourusername/whispr.git
 cd whispr
-chmod +x run_whispr.sh
-./run_whispr.sh
+./setup.sh
 ```
 
 👉 Baut das Docker-Image `whispr` und startet den Container mit allen notwendigen Mounts.
@@ -74,6 +73,11 @@ Gegebenenfals prompt.txt nach vorlieben anpassen
 ---
 
 ### 5. Pipeline ausführen
+execute:
+```bash
+./run_whispr.sh
+```
+
 Die Pipeline konvertiert automatisch:
 
 1. `.mp4` → `.mp3`
