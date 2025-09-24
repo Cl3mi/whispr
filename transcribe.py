@@ -1,4 +1,5 @@
 import os
+import sys
 import glob
 import subprocess
 import whisper
@@ -10,6 +11,13 @@ from dotenv import load_dotenv
 # Choose service: "openai" or "open-router"
 # ----------------------
 SERVICE = "openai"
+
+# ----------------------
+# Flag handling
+# ----------------------
+ONLY_TRANSCRIPT = "--only-transcript" in sys.argv
+if ONLY_TRANSCRIPT:
+    print("⚡ Running in --only-transcript mode: Skipping summaries.")
 
 # ----------------------
 # Load environment
@@ -166,6 +174,7 @@ if __name__ == "__main__":
     print("Looking for transcripts in:", TRANSCRIPT_FOLDER)
     print("Found:", os.listdir(TRANSCRIPT_FOLDER))
 
-    summarize_transcript()
-    print("Looking for summaries in:", SUMMARY_FOLDER)
-    print("Found:", os.listdir(SUMMARY_FOLDER))
+    if not ONLY_TRANSCRIPT:
+        summarize_transcript()
+        print("Looking for summaries in:", SUMMARY_FOLDER)
+        print("Found:", os.listdir(SUMMARY_FOLDER))

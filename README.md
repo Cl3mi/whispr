@@ -9,10 +9,10 @@ Sie nutzt [OpenAI Whisper](https://github.com/openai/whisper) für die Transkrip
 ## ✨ Features
 
 - 🎬 **Video → Audio**: `.mp4` → `.mp3` mit `ffmpeg`
-- 🎧 **Audio → Transcript**: Transkription mit Whisper (GPU-Beschleunigung, falls verfügbar)
+- 🎧 **Audio → Transcript**: Transkription mit Whisper (GPU-beschleunigt, falls verfügbar)
 - 📝 **Transcript → Summary**: Automatische Zusammenfassungen mit OpenAI oder OpenRouter
-- 🐳 **Dockerized**: Einfache Nutzung mit GPU-Support
-- 🌐 **REST API**: Flask-Endpoint `/whisper` für direkte Transkription
+- 🐳 **Dockerized**: Einfache Nutzung mit GPU-Support (zurzeit nur von OP mit NVIDIA GPU's getestet)
+- ⚡ **Flags & Workflows**: Flexible Ausführung mit `--only-transcript` oder Standard-Workflow
 
 ---
 
@@ -40,7 +40,7 @@ Sie nutzt [OpenAI Whisper](https://github.com/openai/whisper) für die Transkrip
 ```bash
 git clone https://github.com/yourusername/whispr.git
 cd whispr
-./setup.sh
+./setup.sh # erstellt benötigte ordner video/, audio/, transcripts/, summaries/
 ```
 
 👉 Baut das Docker-Image `whispr` und startet den Container mit allen notwendigen Mounts.
@@ -73,9 +73,17 @@ Gegebenenfals prompt.txt nach vorlieben anpassen
 ---
 
 ### 5. Pipeline ausführen
-execute:
+Standard (Video → Audio → Transcript → Summary):
 ```bash
 ./run_whispr.sh
+```
+Nur bis Transkript (keine API-Zusammenfassung):
+```bash
+./run_whispr.sh --only-transcript
+```
+Hilfe anzeigen:
+```bash
+./run_whispr.sh -h
 ```
 
 Die Pipeline konvertiert automatisch:
