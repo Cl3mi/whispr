@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 # ----------------------
 # Choose service: "openai" or "open-router"
 # ----------------------
-SERVICE = "openai"
+SERVICE = "openai"       # "openai", "open-router", or "lm-studio"
 
 # ----------------------
 # Choose AI Modell (By Default its set to an openai API Model)
@@ -30,6 +30,8 @@ if ONLY_TRANSCRIPT:
 load_dotenv(dotenv_path="/whisper/.env")
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# configure from default LM Studio endpoint to custom url
+LMSTUDIO_API_URL = "http://localhost:1234/v1/chat/completions"
 
 print(f"DEBUG: SERVICE = {SERVICE}")
 if SERVICE == "open-router":
@@ -108,8 +110,8 @@ def summarize_transcript():
 
     transcript_files = glob.glob(os.path.join(TRANSCRIPT_FOLDER, "*.txt"))
     if not transcript_files:
-        print(f"⚠️ No transcripts found in {
-              TRANSCRIPT_FOLDER}, skipping summary.")
+        print(f"⚠️ No transcripts found in " +
+              TRANSCRIPT_FOLDER + ", skipping summary.")
         return
 
     for tf in transcript_files:
@@ -130,6 +132,7 @@ def summarize_transcript():
             ]
         }
 
+        # === Service routing ===
         if SERVICE == "open-router":
             key = OPENROUTER_API_KEY
             url = "https://openrouter.ai/api/v1/chat/completions"
@@ -144,14 +147,17 @@ def summarize_transcript():
                 "Authorization": f"Bearer {key}",
                 "Content-Type": "application/json"
             }
+        elif SERVICE == "lm-studio":
+            url = LMSTUDIO_API_URL
+            headers = {
+                "Content-Type": "application/json"
+            }
         else:
             raise ValueError(f"Invalid SERVICE value: {SERVICE}")
 
-        print(f"📤 Sending transcript {tf} to {
-              SERVICE} with model '{MODEL_NAME}'...")
-        try:
+        print(f"📤 Sending transcript {tf} to {S
+              SERVICE} with model '{MODEL_NAME}'...") try:
             r = requests.post(url, headers=headers, json=payload, timeout=500)
-            # Debug raw response if needed
             print("DEBUG: raw response:", r.text[:500])
             if r.text.strip().startswith("<!DOCTYPE html>"):
                 raise ValueError(
@@ -183,4 +189,5 @@ if __name__ == "__main__":
     if not ONLY_TRANSCRIPT:
         summarize_transcript()
         print("Looking for summaries in:", SUMMARY_FOLDER)
+        print("Found:", os.listdir(SUMMARY_FOLDER))
         print("Found:", os.listdir(SUMMARY_FOLDER))

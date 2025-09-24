@@ -10,7 +10,7 @@ Sie nutzt [OpenAI Whisper](https://github.com/openai/whisper) für die Transkrip
 
 - 🎬 **Video → Audio**: `.mp4` → `.mp3` mit `ffmpeg`
 - 🎧 **Audio → Transcript**: Transkription mit Whisper (GPU-beschleunigt, falls verfügbar)
-- 📝 **Transcript → Summary**: Automatische Zusammenfassungen mit OpenAI oder OpenRouter
+- 📝 **Transcript → Summary**: Automatische Zusammenfassungen mit OpenAI, OpenRouter oder LM Studio
 - 🐳 **Dockerized**: Einfache Nutzung mit GPU-Support (zurzeit nur von OP mit NVIDIA GPU's getestet)
 - ⚡ **Flags & Workflows**: Flexible Ausführung mit `--only-transcript` oder Standard-Workflow
 
@@ -62,7 +62,7 @@ OPENROUTER_API_KEY=or-xxxx
 
 Wähle den Service in `transcribe.py`:
 ```python
-SERVICE = "openai"       # oder "open-router"
+SERVICE = "openai"       # "openai", "open-router", or "lm-studio"
 ```
 
 Wähle das gewollte AI Modell in `transcribe.py`:
