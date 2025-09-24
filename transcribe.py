@@ -8,9 +8,9 @@ import requests
 from dotenv import load_dotenv
 
 # ----------------------
-# Choose service: "openai" or "open-router"
+# Choose service: "openai", "open-router", or "lm-studio"
 # ----------------------
-SERVICE = "openai"
+SERVICE = "openai" # <-- MODIFIED: Add "lm-studio" as an option
 
 # ----------------------
 # Flag handling
@@ -25,12 +25,21 @@ if ONLY_TRANSCRIPT:
 load_dotenv(dotenv_path="/whisper/.env")
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# <-- ADDED START -->
+# Get the base URL for the LM Studio server, with a default value.
+LMSTUDIO_BASE_URL = os.getenv("LMSTUDIO_BASE_URL", "http://localhost:1234")
+# It's good practice to make the model name configurable
+LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o")
+# <-- ADDED END -->
+
 
 print(f"DEBUG: SERVICE = {SERVICE}")
 if SERVICE == "open-router":
     print(f"DEBUG: OPENROUTER_API_KEY = {OPENROUTER_API_KEY[:6]}...")
 elif SERVICE == "openai":
     print(f"DEBUG: OPENAI_API_KEY = {OPENAI_API_KEY[:6]}...")
+elif SERVICE == "lm-studio":
+    print(f"DEBUG: LMSTUDIO_BASE_URL = {LMSTUDIO_BASE_URL}")
 else:
     raise ValueError(f"Invalid SERVICE value: {SERVICE}")
 
@@ -69,7 +78,7 @@ def convert_videos_to_mp3():
         if not os.path.exists(audio_file):
             print(f"🎬 Converting {vf} → {audio_file}")
             subprocess.run(["ffmpeg", "-i", vf, "-vn",
-                           "-acodec", "mp3", audio_file], check=True)
+                            "-acodec", "mp3", audio_file], check=True)
         else:
             print(f"ℹ️ Audio already exists: {audio_file}")
 
@@ -118,7 +127,7 @@ def summarize_transcript():
             transcript = f.read()
 
         payload = {
-            "model": "gpt-5",
+            "model": LLM_MODEL,
             "messages": [
                 {"role": "system", "content": custom_prompt},
                 {"role": "user", "content": transcript}
@@ -139,6 +148,14 @@ def summarize_transcript():
                 "Authorization": f"Bearer {key}",
                 "Content-Type": "application/json"
             }
+        elif SERVICE == "lm-studio":
+            key = "lm-studio"
+            url = f"{LMSTUDIO_BASE_URL.rstrip('/')}/v1/chat/completions"
+            headers = {
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json"
+            }
+            print(f"ℹ️  Note: Model '{LLM_MODEL}' in payload is often ignored by LM Studio.")
         else:
             raise ValueError(f"Invalid SERVICE value: {SERVICE}")
 
