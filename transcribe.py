@@ -13,6 +13,11 @@ from dotenv import load_dotenv
 SERVICE = "openai"
 
 # ----------------------
+# Choose AI Modell (By Default its set to an openai API Model)
+# ----------------------
+MODEL_NAME = "gpt-5"     # set your model here
+
+# ----------------------
 # Flag handling
 # ----------------------
 ONLY_TRANSCRIPT = "--only-transcript" in sys.argv
@@ -103,8 +108,8 @@ def summarize_transcript():
 
     transcript_files = glob.glob(os.path.join(TRANSCRIPT_FOLDER, "*.txt"))
     if not transcript_files:
-        print(f"⚠️ No transcripts found in" +
-              TRANSCRIPT_FOLDER + ", skipping summary.")
+        print(f"⚠️ No transcripts found in {
+              TRANSCRIPT_FOLDER}, skipping summary.")
         return
 
     for tf in transcript_files:
@@ -118,7 +123,7 @@ def summarize_transcript():
             transcript = f.read()
 
         payload = {
-            "model": "gpt-5",
+            "model": MODEL_NAME,
             "messages": [
                 {"role": "system", "content": custom_prompt},
                 {"role": "user", "content": transcript}
@@ -142,7 +147,8 @@ def summarize_transcript():
         else:
             raise ValueError(f"Invalid SERVICE value: {SERVICE}")
 
-        print(f"📤 Sending transcript {tf} to {SERVICE}...")
+        print(f"📤 Sending transcript {tf} to {
+              SERVICE} with model '{MODEL_NAME}'...")
         try:
             r = requests.post(url, headers=headers, json=payload, timeout=500)
             # Debug raw response if needed

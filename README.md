@@ -65,6 +65,11 @@ Wähle den Service in `transcribe.py`:
 SERVICE = "openai"       # oder "open-router"
 ```
 
+Wähle das gewollte AI Modell in `transcribe.py`:
+```python
+MODEL_NAME = "gpt-5"       # (By Default its set to an openai API Model)
+```
+
 ---
 
 ### 4. Prompt anpassen
