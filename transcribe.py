@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 # ----------------------
 # Choose service: "openai", "open-router", or "lm-studio"
 # ----------------------
-SERVICE = "openai" # <-- MODIFIED: Add "lm-studio" as an option
+SERVICE = "lm-studio" # <-- MODIFIED: Add "lm-studio" as an option
 
 # ----------------------
 # Flag handling
