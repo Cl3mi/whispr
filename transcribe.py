@@ -155,13 +155,16 @@ def summarize_transcript():
         else:
             raise ValueError(f"Invalid SERVICE value: {SERVICE}")
 
-        print(f"📤 Sending transcript {tf} to {S
-              SERVICE} with model '{MODEL_NAME}'...") try:
+        print(f"📤 Sending transcript {tf} to " +
+              SERVICE + "with model '{MODEL_NAME}'...")
+
+        try:
             r = requests.post(url, headers=headers, json=payload, timeout=500)
             print("DEBUG: raw response:", r.text[:500])
             if r.text.strip().startswith("<!DOCTYPE html>"):
                 raise ValueError(
-                    f"{SERVICE} returned HTML, likely invalid model name or endpoint.")
+                    f"{SERVICE} returned HTML, likely invalid model name or endpoint."
+                )
             r.raise_for_status()
             summary = r.json()["choices"][0]["message"]["content"]
             with open(out_file, "w", encoding="utf-8") as f:
@@ -189,5 +192,8 @@ if __name__ == "__main__":
     if not ONLY_TRANSCRIPT:
         summarize_transcript()
         print("Looking for summaries in:", SUMMARY_FOLDER)
+        print("Found:", os.listdir(SUMMARY_FOLDER))
+        print("Found:", os.listdir(SUMMARY_FOLDER))
+        print("Found:", os.listdir(SUMMARY_FOLDER))
         print("Found:", os.listdir(SUMMARY_FOLDER))
         print("Found:", os.listdir(SUMMARY_FOLDER))
