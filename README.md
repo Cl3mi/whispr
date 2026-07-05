@@ -38,7 +38,7 @@ Sie nutzt [OpenAI Whisper](https://github.com/openai/whisper) für die Transkrip
 
 ### 1. Clone & Build
 ```bash
-git clone https://github.com/yourusername/whispr.git
+git clone https://github.com/Cl3mi/whispr.git
 cd whispr
 ./setup.sh # erstellt benötigte ordner video/, audio/, transcripts/, summaries/
 ```
