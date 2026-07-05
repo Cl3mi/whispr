@@ -67,15 +67,21 @@ model = whisper.load_model("base", device=DEVICE)
 
 
 def convert_videos_to_mp3():
-    video_files = glob.glob(os.path.join(VIDEO_FOLDER, "*.mp4"))
+    video_files = []
+    for ext in ("*.mp4", "*.m4v"):
+        video_files.extend(glob.glob(os.path.join(VIDEO_FOLDER, ext)))
     if not video_files:
-        print("⚠️ No .mp4 files found in " + VIDEO_FOLDER)
+        print("⚠️ No .mp4/.m4v files found in " + VIDEO_FOLDER)
     for vf in video_files:
         base = os.path.splitext(os.path.basename(vf))[0]
         audio_file = os.path.join(AUDIO_FOLDER, f"{base}.mp3")
         if not os.path.exists(audio_file):
             print(f"🎬 Converting {vf} → {audio_file}")
+            # Trim leading silence: a silent intro makes Whisper hallucinate on
+            # the first window (e.g. a repeated "1.5%" loop), so strip it here.
             subprocess.run(["ffmpeg", "-i", vf, "-vn",
+                           "-af",
+                           "silenceremove=start_periods=1:start_threshold=-40dB:start_duration=0.5",
                            "-acodec", "mp3", audio_file], check=True)
         else:
             print(f"ℹ️ Audio already exists: {audio_file}")
@@ -90,7 +96,10 @@ def transcribe_audio():
         out_file = os.path.join(TRANSCRIPT_FOLDER, f"{base}.txt")
         if not os.path.exists(out_file):
             print(f"🎧 Transcribing {af} on {DEVICE}...")
-            result = model.transcribe(af)
+            # condition_on_previous_text=False stops a single bad window from
+            # poisoning the whole transcript via the carried-over prompt, which
+            # otherwise collapses the entire output into a repetition loop.
+            result = model.transcribe(af, condition_on_previous_text=False)
             with open(out_file, "w", encoding="utf-8") as f:
                 f.write(result["text"])
             print(f"✅ Saved transcript → {out_file}")
